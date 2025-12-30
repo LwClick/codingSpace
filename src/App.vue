@@ -1,7 +1,27 @@
 <template>
   <div id="app">
     <header class="app-header">
-      <h1>算法刷题日历</h1>
+      <div class="header-content">
+        <div class="logo-container">
+          <div class="taiji-logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <!-- 外圈发光 -->
+              <circle cx="50" cy="50" r="50" fill="none" stroke="rgba(0, 255, 255, 0.3)" stroke-width="1"/>
+              <!-- 太极图案背景 -->
+              <circle cx="50" cy="50" r="48" fill="#0a0e27"/>
+              <!-- 太极图案白色部分 -->
+              <path d="M 50 2 A 48 48 0 0 1 50 98 A 24 24 0 0 0 50 50 A 24 24 0 0 1 50 2 Z" fill="rgba(0, 255, 255, 0.8)"/>
+              <!-- 白色部分的小圆点（黑色） -->
+              <circle cx="50" cy="26" r="11" fill="#0a0e27"/>
+              <!-- 黑色部分的小圆点（白色/青色） -->
+              <circle cx="50" cy="74" r="11" fill="rgba(0, 255, 255, 0.8)"/>
+              <!-- 内圈发光 -->
+              <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0, 255, 255, 0.2)" stroke-width="0.5"/>
+            </svg>
+          </div>
+          <h1>算法刷题日历</h1>
+        </div>
+      </div>
     </header>
     <main class="app-main">
       <Calendar 
@@ -88,7 +108,9 @@ const handleSaveProblem = (problemData) => {
 
 <style scoped>
 #app {
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: 
     radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
@@ -96,7 +118,7 @@ const handleSaveProblem = (problemData) => {
     linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
   background-size: 100% 100%;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 #app::before {
@@ -126,11 +148,11 @@ const handleSaveProblem = (problemData) => {
   background: rgba(10, 14, 39, 0.8);
   backdrop-filter: blur(10px);
   border-bottom: 2px solid rgba(0, 255, 255, 0.3);
-  padding: 25px 20px;
+  padding: 15px 30px;
   box-shadow: 0 4px 30px rgba(0, 255, 255, 0.2);
-  text-align: center;
   position: relative;
   z-index: 1;
+  flex-shrink: 0;
 }
 
 .app-header::before {
@@ -150,25 +172,67 @@ const handleSaveProblem = (problemData) => {
   animation: shimmer 3s infinite;
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.taiji-logo {
+  width: 50px;
+  height: 50px;
+  animation: rotate 10s linear infinite;
+  filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
+  flex-shrink: 0;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.taiji-logo svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.6));
+}
+
+
 .app-header h1 {
   margin: 0;
   background: linear-gradient(135deg, #00ffff 0%, #0080ff 50%, #8a2be2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-size: 2.8em;
+  font-size: 2.2em;
   font-weight: 700;
   letter-spacing: 2px;
   text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
   animation: pulse 3s ease-in-out infinite;
+  white-space: nowrap;
 }
 
 .app-main {
-  padding: 30px 20px;
+  flex: 1;
+  padding: 15px 20px;
   max-width: 1400px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 </style>
 

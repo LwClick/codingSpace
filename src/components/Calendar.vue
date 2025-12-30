@@ -171,7 +171,7 @@ function viewProblem(problem) {
   background: rgba(10, 14, 39, 0.6);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  padding: 35px;
+  padding: 20px;
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(0, 255, 255, 0.2),
@@ -179,6 +179,10 @@ function viewProblem(problem) {
   border: 1px solid rgba(0, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 .calendar-container::before {
@@ -197,9 +201,10 @@ function viewProblem(problem) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   position: relative;
   z-index: 1;
+  flex-shrink: 0;
 }
 
 .calendar-header h2 {
@@ -208,7 +213,7 @@ function viewProblem(problem) {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-size: 2em;
+  font-size: 1.6em;
   font-weight: 700;
   letter-spacing: 1px;
   text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
@@ -218,10 +223,10 @@ function viewProblem(problem) {
   background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 128, 255, 0.2));
   color: #00ffff;
   border: 2px solid rgba(0, 255, 255, 0.5);
-  width: 45px;
-  height: 45px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  font-size: 26px;
+  font-size: 22px;
   cursor: pointer;
   transition: all 0.3s;
   display: flex;
@@ -260,10 +265,11 @@ function viewProblem(problem) {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
-  margin-bottom: 30px;
+  gap: 8px;
+  margin-bottom: 15px;
   position: relative;
   z-index: 1;
+  flex-shrink: 0;
 }
 
 .weekday {
@@ -271,8 +277,8 @@ function viewProblem(problem) {
   font-weight: 600;
   background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
   color: #00ffff;
-  padding: 12px;
-  font-size: 1.1em;
+  padding: 8px 4px;
+  font-size: 0.95em;
   border-radius: 8px;
   border: 1px solid rgba(0, 255, 255, 0.2);
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
@@ -281,8 +287,8 @@ function viewProblem(problem) {
 .calendar-day {
   aspect-ratio: 1;
   border: 2px solid rgba(0, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: 10px;
+  padding: 6px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -348,9 +354,9 @@ function viewProblem(problem) {
 }
 
 .day-number {
-  font-size: 1.3em;
+  font-size: 1.1em;
   color: #e0e0e0;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   font-weight: 600;
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
   position: relative;
@@ -406,11 +412,14 @@ function viewProblem(problem) {
 }
 
 .problems-list {
-  margin-top: 30px;
-  padding-top: 30px;
+  margin-top: 15px;
+  padding-top: 15px;
   border-top: 2px solid rgba(0, 255, 255, 0.2);
   position: relative;
   z-index: 1;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .problems-list h3 {
@@ -418,10 +427,11 @@ function viewProblem(problem) {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 20px;
-  font-size: 1.4em;
+  margin-bottom: 12px;
+  font-size: 1.2em;
   font-weight: 700;
   text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  flex-shrink: 0;
 }
 
 .problem-items {
@@ -433,8 +443,8 @@ function viewProblem(problem) {
 .problem-item {
   background: rgba(10, 14, 39, 0.5);
   backdrop-filter: blur(10px);
-  padding: 18px;
-  border-radius: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.4s;
   display: flex;
@@ -443,6 +453,7 @@ function viewProblem(problem) {
   border: 1px solid rgba(0, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .problem-item::before {
