@@ -166,10 +166,29 @@ function viewProblem(problem) {
 
 <style scoped>
 .calendar-container {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  background: rgba(10, 14, 39, 0.6);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 255, 255, 0.2),
+    inset 0 0 60px rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+  animation: float 15s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .calendar-header {
@@ -177,108 +196,188 @@ function viewProblem(problem) {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
 }
 
 .calendar-header h2 {
   margin: 0;
-  color: #333;
-  font-size: 1.8em;
+  background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2em;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
 }
 
 .nav-btn {
-  background: #667eea;
-  color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 128, 255, 0.2));
+  color: #00ffff;
+  border: 2px solid rgba(0, 255, 255, 0.5);
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  font-size: 24px;
+  font-size: 26px;
   cursor: pointer;
   transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.nav-btn:hover::before {
+  width: 200px;
+  height: 200px;
 }
 
 .nav-btn:hover {
-  background: #5568d3;
-  transform: scale(1.1);
+  border-color: #00ffff;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+  transform: scale(1.1) rotate(5deg);
+  color: #ffffff;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
 }
 
 .weekday {
   text-align: center;
   font-weight: 600;
-  color: #667eea;
-  padding: 10px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
+  color: #00ffff;
+  padding: 12px;
   font-size: 1.1em;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .calendar-day {
   aspect-ratio: 1;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 8px;
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 10px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background: #f9f9f9;
+  background: rgba(10, 14, 39, 0.4);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.calendar-day::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.calendar-day:hover::before {
+  left: 100%;
 }
 
 .calendar-day:hover {
-  border-color: #667eea;
-  background: #f0f0ff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+  border-color: #00ffff;
+  background: rgba(0, 255, 255, 0.1);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 8px 25px rgba(0, 255, 255, 0.3),
+    0 0 20px rgba(0, 255, 255, 0.2),
+    inset 0 0 20px rgba(0, 255, 255, 0.05);
 }
 
 .calendar-day.other-month {
-  opacity: 0.4;
-  background: #f5f5f5;
+  opacity: 0.3;
+  background: rgba(10, 14, 39, 0.2);
 }
 
 .calendar-day.today {
-  border-color: #667eea;
-  background: #e8eaff;
-  font-weight: 600;
+  border-color: #00ffff;
+  background: rgba(0, 255, 255, 0.15);
+  font-weight: 700;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.4),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+  animation: glow 2s ease-in-out infinite;
 }
 
 .calendar-day.has-problems {
-  border-color: #4caf50;
-  background: #e8f5e9;
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.calendar-day.has-problems:hover {
+  box-shadow: 
+    0 8px 25px rgba(0, 255, 136, 0.4),
+    0 0 20px rgba(0, 255, 136, 0.3);
 }
 
 .day-number {
-  font-size: 1.2em;
-  color: #333;
+  font-size: 1.3em;
+  color: #e0e0e0;
   margin-bottom: 4px;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .problem-badge {
-  background: #4caf50;
-  color: white;
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  color: #0a0e27;
   font-size: 0.7em;
-  padding: 2px 6px;
-  border-radius: 10px;
+  padding: 3px 8px;
+  border-radius: 12px;
   margin-top: auto;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  position: relative;
+  z-index: 1;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .add-btn {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  background: #667eea;
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
+  top: 6px;
+  right: 6px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 128, 255, 0.3));
+  color: #00ffff;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   font-size: 18px;
   line-height: 1;
@@ -288,6 +387,8 @@ function viewProblem(problem) {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  z-index: 2;
 }
 
 .calendar-day:hover .add-btn {
@@ -295,66 +396,110 @@ function viewProblem(problem) {
 }
 
 .add-btn:hover {
-  background: #5568d3;
-  transform: scale(1.2);
+  background: linear-gradient(135deg, #00ffff, #0080ff);
+  color: #0a0e27;
+  border-color: #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+  transform: scale(1.3) rotate(90deg);
 }
 
 .problems-list {
   margin-top: 30px;
   padding-top: 30px;
-  border-top: 2px solid #e0e0e0;
+  border-top: 2px solid rgba(0, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
 }
 
 .problems-list h3 {
-  color: #333;
-  margin-bottom: 15px;
+  background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+  font-size: 1.4em;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
 }
 
 .problem-items {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .problem-item {
-  background: #f5f5f5;
-  padding: 15px;
-  border-radius: 8px;
+  background: rgba(10, 14, 39, 0.5);
+  backdrop-filter: blur(10px);
+  padding: 18px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.4s;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.problem-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: linear-gradient(180deg, #00ffff, #0080ff);
+  transform: scaleY(0);
+  transition: transform 0.4s;
+}
+
+.problem-item:hover::before {
+  transform: scaleY(1);
 }
 
 .problem-item:hover {
-  background: #e8eaff;
-  transform: translateX(5px);
+  background: rgba(0, 255, 255, 0.1);
+  transform: translateX(8px);
+  border-color: rgba(0, 255, 255, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
 }
 
 .problem-title {
   font-weight: 500;
-  color: #333;
+  color: #e0e0e0;
+  position: relative;
+  z-index: 1;
 }
 
 .problem-actions {
   display: flex;
   gap: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .edit-btn {
-  background: #667eea;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 128, 255, 0.2));
+  color: #00ffff;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  padding: 8px 16px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.9em;
   transition: all 0.3s;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 .edit-btn:hover {
-  background: #5568d3;
+  background: linear-gradient(135deg, #00ffff, #0080ff);
+  color: #0a0e27;
+  border-color: #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  transform: translateY(-2px);
 }
 </style>
+
 
