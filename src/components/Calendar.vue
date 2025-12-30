@@ -68,7 +68,7 @@ const emit = defineEmits(['add-problem', 'edit-problem', 'view-problem'])
 const currentDate = ref(new Date())
 const selectedDateKey = ref('')
 
-const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
 
 const currentYear = computed(() => currentDate.value.getFullYear())
 const currentMonth = computed(() => currentDate.value.getMonth())
@@ -136,7 +136,9 @@ const selectedDateProblems = computed(() => {
 const selectedDateText = computed(() => {
   if (!selectedDateKey.value) return ''
   const [year, month, day] = selectedDateKey.value.split('-')
-  return `${year}年${month}月${day}日`
+  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+  const weekday = weekdays[date.getDay()]
+  return weekday
 })
 
 function previousMonth() {
