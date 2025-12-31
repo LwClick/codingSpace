@@ -1,17 +1,5 @@
 <template>
   <div class="home-container">
-    <div class="search-section">
-      <div class="search-box">
-        <input 
-          type="text" 
-          placeholder="搜索工具..." 
-          v-model="searchQuery"
-          class="search-input"
-        />
-        <button class="search-btn">搜索</button>
-      </div>
-    </div>
-
     <div class="categories-section">
       <div class="category-tabs">
         <button 
@@ -48,11 +36,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const searchQuery = ref('')
+const searchQuery = inject('searchQuery', ref(''))
 const activeCategory = ref('all')
 
 const categories = [
@@ -134,57 +122,6 @@ function navigateToTool(tool) {
   max-width: 1400px;
   margin: 0 auto;
   padding: 30px 20px;
-}
-
-.search-section {
-  margin-bottom: 40px;
-}
-
-.search-box {
-  display: flex;
-  gap: 10px;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.search-input {
-  flex: 1;
-  padding: 15px 20px;
-  border: 2px solid rgba(0, 255, 255, 0.3);
-  border-radius: 25px;
-  background: rgba(10, 14, 39, 0.6);
-  backdrop-filter: blur(10px);
-  color: #e0e0e0;
-  font-size: 16px;
-  outline: none;
-  transition: all 0.3s;
-}
-
-.search-input:focus {
-  border-color: rgba(0, 255, 255, 0.6);
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-}
-
-.search-input::placeholder {
-  color: rgba(224, 224, 224, 0.5);
-}
-
-.search-btn {
-  padding: 15px 30px;
-  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 128, 255, 0.2));
-  color: #00ffff;
-  border: 2px solid rgba(0, 255, 255, 0.5);
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: all 0.3s;
-}
-
-.search-btn:hover {
-  background: linear-gradient(135deg, #00ffff, #0080ff);
-  color: #0a0e27;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
 }
 
 .categories-section {

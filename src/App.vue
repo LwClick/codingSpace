@@ -13,26 +13,69 @@
               <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0, 255, 255, 0.2)" stroke-width="0.5"/>
             </svg>
           </div>
-          <h1>算法工具箱</h1>
+          <h1>codingSpace</h1>
+        </div>
+        <div class="header-center">
+          <div class="search-box-header">
+            <input 
+              type="text" 
+              placeholder="搜索工具..." 
+              v-model="searchQuery"
+              class="search-input-header"
+            />
+            <button class="search-btn-header">搜索</button>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="time-display">{{ currentTime }}</div>
+          <div class="avatar-container">
+            <div class="avatar">
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="50" fill="rgba(0, 255, 255, 0.2)"/>
+                <circle cx="50" cy="35" r="15" fill="rgba(0, 255, 255, 0.8)"/>
+                <path d="M 20 85 Q 20 65 50 65 Q 80 65 80 85" fill="rgba(0, 255, 255, 0.8)"/>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </header>
     <main class="app-main">
       <router-view />
     </main>
+    <footer class="app-footer">
+      <span>© 2024 codingSpace. All rights reserved.</span>
+    </footer>
     <CalendarWidget :problems="problems" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, provide } from 'vue'
 import CalendarWidget from './components/CalendarWidget.vue'
 import { loadProblems } from './utils/storage.js'
 
 const problems = ref({})
+const currentTime = ref('')
+const searchQuery = ref('')
+
+// 提供搜索查询给子组件使用
+provide('searchQuery', searchQuery)
+
+function updateTime() {
+  const now = new Date()
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  currentTime.value = `${hours}:${minutes}:${seconds}`
+}
+
+let timeInterval = null
 
 onMounted(() => {
   problems.value = loadProblems()
+  updateTime()
+  timeInterval = setInterval(updateTime, 1000)
   
   // 监听存储变化，更新数据
   window.addEventListener('storage', () => {
@@ -43,6 +86,12 @@ onMounted(() => {
   window.addEventListener('problemsUpdated', () => {
     problems.value = loadProblems()
   })
+})
+
+onUnmounted(() => {
+  if (timeInterval) {
+    clearInterval(timeInterval)
+  }
 })
 </script>
 
@@ -88,11 +137,11 @@ onMounted(() => {
   background: rgba(10, 14, 39, 0.8);
   backdrop-filter: blur(10px);
   border-bottom: 2px solid rgba(0, 255, 255, 0.3);
-  padding: 15px 30px;
   box-shadow: 0 4px 30px rgba(0, 255, 255, 0.2);
   position: relative;
   z-index: 1;
   flex-shrink: 0;
+  padding: 10px 20px;
 }
 
 .app-header::before {
@@ -115,13 +164,21 @@ onMounted(() => {
 .header-content {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   cursor: pointer;
   transition: opacity 0.3s;
 }
@@ -131,8 +188,8 @@ onMounted(() => {
 }
 
 .taiji-logo {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   animation: rotate 10s linear infinite;
   filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
   flex-shrink: 0;
@@ -160,12 +217,158 @@ onMounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-size: 2.2em;
+  font-size: 1.6em;
   font-weight: 700;
   letter-spacing: 2px;
   text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
   animation: pulse 3s ease-in-out infinite;
   white-space: nowrap;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.search-box-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-input-header {
+  width: 400px;
+  padding: 10px 20px;
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  border-radius: 20px;
+  background: rgba(10, 14, 39, 0.6);
+  backdrop-filter: blur(10px);
+  color: #e0e0e0;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-input-header:focus {
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+  width: 450px;
+}
+
+.search-input-header::placeholder {
+  color: rgba(224, 224, 224, 0.5);
+}
+
+.search-btn-header {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 128, 255, 0.2));
+  color: #00ffff;
+  border: 2px solid rgba(0, 255, 255, 0.5);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.search-btn-header:hover {
+  background: linear-gradient(135deg, #00ffff, #0080ff);
+  color: #0a0e27;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+.app-footer {
+  padding: 15px 20px;
+  border-top: 1px solid rgba(0, 255, 255, 0.1);
+  background: rgba(10, 14, 39, 0.5);
+  text-align: center;
+  font-size: 12px;
+  color: rgba(224, 224, 224, 0.6);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  z-index: 1;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .header-center {
+    order: 3;
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .search-box-header {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .search-input-header {
+    flex: 1;
+    width: auto;
+  }
+  
+  .search-input-header:focus {
+    width: auto;
+  }
+  
+  .header-right {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .app-header h1 {
+    font-size: 1.3em;
+  }
+  
+  .time-display {
+    font-size: 0.9em;
+  }
+}
+
+.time-display {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+.avatar-container {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 255, 0.5);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: rgba(0, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar:hover {
+  border-color: rgba(0, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.avatar svg {
+  width: 100%;
+  height: 100%;
 }
 
 .app-main {
