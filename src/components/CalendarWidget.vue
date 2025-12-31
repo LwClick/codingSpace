@@ -161,28 +161,16 @@ function formatTime(timestamp) {
 
 <style scoped>
 .calendar-widget {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  width: 320px;
-  max-width: calc(100vw - 40px);
-  background: rgba(10, 14, 39, 0.9);
+  width: 100%;
+  background: rgba(10, 14, 39, 0.6);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 255, 255, 0.3);
-  border-radius: 15px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  z-index: 100;
-  max-height: calc(100vh - 100px);
+  border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 0 -4px 20px rgba(0, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
-}
-
-@media (max-width: 768px) {
-  .calendar-widget {
-    width: calc(100vw - 20px);
-    right: 10px;
-    top: 70px;
-  }
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .widget-header {

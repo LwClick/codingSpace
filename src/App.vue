@@ -41,23 +41,34 @@
       </div>
     </header>
     <main class="app-main">
-      <router-view />
+      <div class="main-layout">
+        <NewsPanel ref="newsPanelRef" />
+        <div class="content-area">
+          <router-view />
+        </div>
+        <div class="right-sidebar">
+          <CalendarWidget :problems="problems" />
+          <AIModelsPanel />
+        </div>
+      </div>
     </main>
     <footer class="app-footer">
       <span>© 2024 codingSpace. All rights reserved.</span>
     </footer>
-    <CalendarWidget :problems="problems" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, provide } from 'vue'
 import CalendarWidget from './components/CalendarWidget.vue'
+import NewsPanel from './components/NewsPanel.vue'
+import AIModelsPanel from './components/AIModelsPanel.vue'
 import { loadProblems } from './utils/storage.js'
 
 const problems = ref({})
 const currentTime = ref('')
 const searchQuery = ref('')
+const newsPanelRef = ref(null)
 
 // 提供搜索查询给子组件使用
 provide('searchQuery', searchQuery)
@@ -209,7 +220,6 @@ onUnmounted(() => {
   height: 100%;
   filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.6));
 }
-
 
 .app-header h1 {
   margin: 0;
@@ -373,16 +383,87 @@ onUnmounted(() => {
 
 .app-main {
   flex: 1;
-  padding: 15px 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 0;
   position: relative;
   z-index: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   width: 100%;
   box-sizing: border-box;
 }
+
+.main-layout {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 15px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content-area > * {
+  max-width: 1400px;
+  width: 100%;
+}
+
+.right-sidebar {
+  width: 350px;
+  min-width: 300px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+  border-left: 2px solid rgba(0, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+/* 响应式布局 */
+@media (max-width: 1400px) {
+  .right-sidebar {
+    width: 320px;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    flex-direction: column;
+  }
+  
+  .news-panel {
+    max-height: 300px;
+    border-right: none;
+    border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+  }
+  
+  .right-sidebar {
+    width: 100%;
+    max-width: 100%;
+    max-height: 500px;
+    border-left: none;
+    border-top: 2px solid rgba(0, 255, 255, 0.3);
+    flex-direction: row;
+  }
+  
+  .calendar-widget {
+    flex: 1;
+    border-bottom: none;
+    border-right: 2px solid rgba(0, 255, 255, 0.3);
+  }
+  
+  .ai-models-panel {
+    flex: 1;
+    border-top: none;
+    max-height: 100%;
+  }
+}
 </style>
-
-
