@@ -2,108 +2,48 @@
   <div id="app">
     <header class="app-header">
       <div class="header-content">
-        <div class="logo-container">
+        <div class="logo-container" @click="$router.push('/')">
           <div class="taiji-logo">
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <!-- 外圈发光 -->
               <circle cx="50" cy="50" r="50" fill="none" stroke="rgba(0, 255, 255, 0.3)" stroke-width="1"/>
-              <!-- 太极图案背景 -->
               <circle cx="50" cy="50" r="48" fill="#0a0e27"/>
-              <!-- 太极图案白色部分 -->
               <path d="M 50 2 A 48 48 0 0 1 50 98 A 24 24 0 0 0 50 50 A 24 24 0 0 1 50 2 Z" fill="rgba(0, 255, 255, 0.8)"/>
-              <!-- 白色部分的小圆点（黑色） -->
               <circle cx="50" cy="26" r="11" fill="#0a0e27"/>
-              <!-- 黑色部分的小圆点（白色/青色） -->
               <circle cx="50" cy="74" r="11" fill="rgba(0, 255, 255, 0.8)"/>
-              <!-- 内圈发光 -->
               <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0, 255, 255, 0.2)" stroke-width="0.5"/>
             </svg>
           </div>
-          <h1>算法刷题日历</h1>
+          <h1>算法工具箱</h1>
         </div>
       </div>
     </header>
     <main class="app-main">
-      <Calendar 
-        :problems="problems" 
-        @add-problem="handleAddProblem"
-        @edit-problem="handleEditProblem"
-        @view-problem="handleViewProblem"
-      />
+      <router-view />
     </main>
-    <ProblemModal
-      v-if="showModal"
-      :problem="currentProblem"
-      :date="selectedDate"
-      @close="handleCloseModal"
-      @save="handleSaveProblem"
-    />
+    <CalendarWidget :problems="problems" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import Calendar from './components/Calendar.vue'
-import ProblemModal from './components/ProblemModal.vue'
-import { loadProblems, saveProblems } from './utils/storage.js'
+import CalendarWidget from './components/CalendarWidget.vue'
+import { loadProblems } from './utils/storage.js'
 
 const problems = ref({})
-const showModal = ref(false)
-const currentProblem = ref(null)
-const selectedDate = ref('')
 
 onMounted(() => {
   problems.value = loadProblems()
+  
+  // 监听存储变化，更新数据
+  window.addEventListener('storage', () => {
+    problems.value = loadProblems()
+  })
+  
+  // 监听自定义事件，当数据保存时更新
+  window.addEventListener('problemsUpdated', () => {
+    problems.value = loadProblems()
+  })
 })
-
-const handleAddProblem = (date) => {
-  selectedDate.value = date
-  currentProblem.value = null
-  showModal.value = true
-}
-
-const handleEditProblem = (problem) => {
-  currentProblem.value = { ...problem }
-  selectedDate.value = problem.date
-  showModal.value = true
-}
-
-const handleViewProblem = (problem) => {
-  currentProblem.value = { ...problem }
-  selectedDate.value = problem.date
-  showModal.value = true
-}
-
-const handleCloseModal = () => {
-  showModal.value = false
-  currentProblem.value = null
-  selectedDate.value = ''
-}
-
-const handleSaveProblem = (problemData) => {
-  const date = problemData.date
-  if (!problems.value[date]) {
-    problems.value[date] = []
-  }
-  
-  if (currentProblem.value && currentProblem.value.id) {
-    // 编辑模式
-    const index = problems.value[date].findIndex(p => p.id === currentProblem.value.id)
-    if (index !== -1) {
-      problems.value[date][index] = { ...problemData, id: currentProblem.value.id }
-    }
-  } else {
-    // 新增模式
-    const newProblem = {
-      ...problemData,
-      id: Date.now().toString()
-    }
-    problems.value[date].push(newProblem)
-  }
-  
-  saveProblems(problems.value)
-  handleCloseModal()
-}
 </script>
 
 <style scoped>
@@ -182,6 +122,12 @@ const handleSaveProblem = (problemData) => {
   display: flex;
   align-items: center;
   gap: 15px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.logo-container:hover {
+  opacity: 0.8;
 }
 
 .taiji-logo {
