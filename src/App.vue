@@ -1,74 +1,94 @@
 <template>
-  <div id="app">
-    <header class="app-header">
-      <div class="header-content">
-        <div class="logo-container" @click="$router.push('/')">
-          <div class="taiji-logo">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="50" fill="none" stroke="rgba(0, 255, 255, 0.3)" stroke-width="1"/>
-              <circle cx="50" cy="50" r="48" fill="#0a0e27"/>
-              <path d="M 50 2 A 48 48 0 0 1 50 98 A 24 24 0 0 0 50 50 A 24 24 0 0 1 50 2 Z" fill="rgba(0, 255, 255, 0.8)"/>
-              <circle cx="50" cy="26" r="11" fill="#0a0e27"/>
-              <circle cx="50" cy="74" r="11" fill="rgba(0, 255, 255, 0.8)"/>
-              <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0, 255, 255, 0.2)" stroke-width="0.5"/>
-            </svg>
-          </div>
-          <h1>codingSpace</h1>
-        </div>
-        <div class="header-center">
-          <div class="search-box-header">
-            <input 
-              type="text" 
-              placeholder="搜索工具..." 
-              v-model="searchQuery"
-              class="search-input-header"
-            />
-            <button class="search-btn-header">搜索</button>
-          </div>
-        </div>
-        <div class="header-right">
-          <div class="time-display">{{ currentTime }}</div>
-          <div class="avatar-container">
-            <div class="avatar">
+  <div id="app" :class="{ 'authenticated': authenticated }">
+    <!-- 未登录时只显示登录页，不显示其他内容 -->
+    <template v-if="!authenticated">
+      <router-view />
+    </template>
+    
+    <!-- 登录后显示完整页面 -->
+    <template v-else>
+      <header class="app-header">
+        <div class="header-content">
+          <div class="logo-container" @click="$router.push('/')">
+            <div class="taiji-logo">
               <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="50" fill="rgba(0, 255, 255, 0.2)"/>
-                <circle cx="50" cy="35" r="15" fill="rgba(0, 255, 255, 0.8)"/>
-                <path d="M 20 85 Q 20 65 50 65 Q 80 65 80 85" fill="rgba(0, 255, 255, 0.8)"/>
+                <circle cx="50" cy="50" r="50" fill="none" stroke="rgba(0, 255, 255, 0.3)" stroke-width="1"/>
+                <circle cx="50" cy="50" r="48" fill="#0a0e27"/>
+                <path d="M 50 2 A 48 48 0 0 1 50 98 A 24 24 0 0 0 50 50 A 24 24 0 0 1 50 2 Z" fill="rgba(0, 255, 255, 0.8)"/>
+                <circle cx="50" cy="26" r="11" fill="#0a0e27"/>
+                <circle cx="50" cy="74" r="11" fill="rgba(0, 255, 255, 0.8)"/>
+                <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0, 255, 255, 0.2)" stroke-width="0.5"/>
               </svg>
+            </div>
+            <h1>codingSpace</h1>
+          </div>
+          <div class="header-center">
+            <div class="search-box-header">
+              <input 
+                type="text" 
+                placeholder="搜索工具..." 
+                v-model="searchQuery"
+                class="search-input-header"
+              />
+              <button class="search-btn-header">搜索</button>
+            </div>
+          </div>
+          <div class="header-right">
+            <div class="time-display">{{ currentTime }}</div>
+            <div class="user-info">
+              <span v-if="currentUser" class="username">{{ currentUser.username }}</span>
+              <div class="avatar-container" @click="showLogoutMenu = !showLogoutMenu">
+                <div class="avatar">
+                  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="50" fill="rgba(0, 255, 255, 0.2)"/>
+                    <circle cx="50" cy="35" r="15" fill="rgba(0, 255, 255, 0.8)"/>
+                    <path d="M 20 85 Q 20 65 50 65 Q 80 65 80 85" fill="rgba(0, 255, 255, 0.8)"/>
+                  </svg>
+                </div>
+                <div v-if="showLogoutMenu" class="logout-menu">
+                  <button @click="handleLogout" class="logout-btn">登出</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </header>
-    <main class="app-main">
-      <div class="main-layout">
-        <NewsPanel ref="newsPanelRef" />
-        <div class="content-area">
-          <router-view />
+      </header>
+      <main class="app-main">
+        <div class="main-layout">
+          <NewsPanel ref="newsPanelRef" />
+          <div class="content-area">
+            <router-view />
+          </div>
+          <div class="right-sidebar">
+            <CalendarWidget :problems="problems" />
+            <AIModelsPanel />
+          </div>
         </div>
-        <div class="right-sidebar">
-          <CalendarWidget :problems="problems" />
-          <AIModelsPanel />
-        </div>
-      </div>
-    </main>
-    <footer class="app-footer">
-      <span>© 2024 codingSpace. All rights reserved.</span>
-    </footer>
+      </main>
+      <footer class="app-footer">
+        <span>© 2024 codingSpace. All rights reserved.</span>
+      </footer>
+    </template>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, provide } from 'vue'
+import { useRouter } from 'vue-router'
 import CalendarWidget from './components/CalendarWidget.vue'
 import NewsPanel from './components/NewsPanel.vue'
 import AIModelsPanel from './components/AIModelsPanel.vue'
 import { loadProblems } from './utils/storage.js'
+import { getCurrentUser, logout, isAuthenticated } from './utils/auth.js'
 
+const router = useRouter()
 const problems = ref({})
 const currentTime = ref('')
 const searchQuery = ref('')
 const newsPanelRef = ref(null)
+const currentUser = ref(getCurrentUser())
+const showLogoutMenu = ref(false)
+const authenticated = ref(isAuthenticated())
 
 // 提供搜索查询给子组件使用
 provide('searchQuery', searchQuery)
@@ -83,19 +103,68 @@ function updateTime() {
 
 let timeInterval = null
 
+function handleLogout() {
+  logout()
+  showLogoutMenu.value = false
+  router.push('/login')
+}
+
+function handleAuthStateChange() {
+  const isAuth = isAuthenticated()
+  authenticated.value = isAuth
+  
+  if (isAuth) {
+    currentUser.value = getCurrentUser()
+  } else {
+    currentUser.value = null
+    router.push('/login')
+  }
+}
+
 onMounted(() => {
-  problems.value = loadProblems()
-  updateTime()
-  timeInterval = setInterval(updateTime, 1000)
+  // 初始化登录状态
+  authenticated.value = isAuthenticated()
+  
+  // 如果已登录，初始化其他功能
+  if (authenticated.value) {
+    problems.value = loadProblems()
+    updateTime()
+    timeInterval = setInterval(updateTime, 1000)
+    currentUser.value = getCurrentUser()
+  } else {
+    // 未登录时跳转到登录页
+    if (router.currentRoute.value.path !== '/login') {
+      router.push('/login')
+    }
+  }
   
   // 监听存储变化，更新数据
   window.addEventListener('storage', () => {
-    problems.value = loadProblems()
+    if (authenticated.value) {
+      problems.value = loadProblems()
+    }
+    // 检查登录状态是否变化
+    const isAuth = isAuthenticated()
+    if (isAuth !== authenticated.value) {
+      handleAuthStateChange()
+    }
   })
   
   // 监听自定义事件，当数据保存时更新
   window.addEventListener('problemsUpdated', () => {
-    problems.value = loadProblems()
+    if (authenticated.value) {
+      problems.value = loadProblems()
+    }
+  })
+  
+  // 监听登录状态变化
+  window.addEventListener('authStateChanged', handleAuthStateChange)
+  
+  // 点击外部关闭登出菜单
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.avatar-container')) {
+      showLogoutMenu.value = false
+    }
   })
 })
 
@@ -103,6 +172,7 @@ onUnmounted(() => {
   if (timeInterval) {
     clearInterval(timeInterval)
   }
+  window.removeEventListener('authStateChanged', handleAuthStateChange)
 })
 </script>
 
@@ -111,17 +181,22 @@ onUnmounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 登录后的背景样式 */
+#app.authenticated {
   background: 
     radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
     radial-gradient(circle at 40% 20%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
     linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
   background-size: 100% 100%;
-  position: relative;
-  overflow: hidden;
 }
 
-#app::before {
+/* 登录后的背景动画 */
+#app.authenticated::before {
   content: '';
   position: fixed;
   top: 0;
@@ -351,9 +426,23 @@ onUnmounted(() => {
   letter-spacing: 1px;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.username {
+  color: #00ffff;
+  font-size: 0.9em;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
 .avatar-container {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .avatar {
@@ -379,6 +468,39 @@ onUnmounted(() => {
 .avatar svg {
   width: 100%;
   height: 100%;
+}
+
+.logout-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: rgba(10, 14, 39, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  min-width: 100px;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: rgba(255, 77, 77, 0.2);
+  border: 1px solid rgba(255, 77, 77, 0.5);
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 77, 77, 0.3);
+  border-color: rgba(255, 77, 77, 0.7);
+  transform: translateY(-1px);
 }
 
 .app-main {
