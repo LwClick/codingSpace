@@ -11,8 +11,14 @@ from jose import JWTError, jwt
 from app.core.config import settings
 from app.db.database import get_db
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse, Token, UserLogin
-from app.core.security import verify_password, get_password_hash, create_access_token
+from app.schemas.user import UserCreate, UserResponse, Token, UserLogin, UserLoginEncrypted
+from app.core.security import (
+    verify_password, 
+    get_password_hash, 
+    create_access_token,
+    get_public_key_pem,
+    decrypt_password
+)
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
@@ -122,4 +128,46 @@ async def login_json(user_data: UserLogin, db: Session = Depends(get_db)):
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     """获取当前用户信息"""
     return current_user
+
+
+@router.get("/public-key")
+async def get_public_key():
+    """获取RSA公钥（用于前端加密密码）"""
+    public_key_pem = get_public_key_pem()
+    return {
+        "public_key": public_key_pem,
+        "algorithm": "RSA-OAEP",
+        "key_size": 2048
+    }
+
+
+@router.post("/login-encrypted", response_model=Token)
+async def login_encrypted(user_data: UserLoginEncrypted, db: Session = Depends(get_db)):
+    """用户登录（加密密码）"""
+    try:
+        # 解密密码
+        decrypted_password = decrypt_password(user_data.encrypted_password)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"密码解密失败: {str(e)}"
+        )
+    
+    # 验证用户
+    user = db.query(User).filter(User.username == user_data.username).first()
+    if not user or not verify_password(decrypted_password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="用户名或密码错误",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="用户账户已被禁用"
+        )
+    
+    access_token = create_access_token(data={"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer"}
 

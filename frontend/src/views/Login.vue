@@ -86,7 +86,7 @@ async function handleLogin() {
   isLoading.value = true
 
   try {
-    const result = login(username.value, password.value)
+    const result = await login(username.value, password.value)
     
     if (result.success) {
       // 登录成功，跳转到首页或之前访问的页面

@@ -20,7 +20,13 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     """用户登录模式"""
     username: str
-    password: str
+    password: str  # 可以是明文密码或加密密码
+
+
+class UserLoginEncrypted(BaseModel):
+    """用户登录模式（加密密码）"""
+    username: str
+    encrypted_password: str  # Base64编码的RSA加密密码
 
 
 class UserResponse(UserBase):

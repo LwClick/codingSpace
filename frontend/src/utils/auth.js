@@ -1,4 +1,6 @@
 // 认证工具 - 管理用户登录状态
+import api, { API_BASE_URL } from './api.js'
+import { encryptPassword } from './encryption.js'
 
 const AUTH_KEY = 'codingSpace_auth'
 const USER_KEY = 'codingSpace_user'
@@ -19,6 +21,11 @@ export function isAuthenticated() {
       return false
     }
     
+    // 检查是否有access_token
+    if (!authData.access_token) {
+      return false
+    }
+    
     return authData.isAuthenticated === true
   } catch (error) {
     console.error('检查登录状态失败:', error)
@@ -27,46 +34,96 @@ export function isAuthenticated() {
 }
 
 /**
- * 登录
- * @param {string} username - 用户名
- * @param {string} password - 密码
- * @returns {Promise<{success: boolean, message: string}>}
+ * 获取访问token
+ * @returns {string|null}
  */
-export function login(username, password) {
-  // 简单的登录验证（实际项目中应该调用后端API）
-  // 这里使用硬编码的账号密码，您可以根据需要修改
-  const validUsers = [
-    { username: 'admin', password: 'admin123' },
-    { username: 'user', password: 'user123' },
-    { username: 'test', password: 'test123' }
-  ]
-  
-  const user = validUsers.find(u => u.username === username && u.password === password)
-  
-  if (user) {
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 7) // 7天后过期
+export function getAccessToken() {
+  try {
+    const auth = localStorage.getItem(AUTH_KEY)
+    if (!auth) return null
     
-    const authData = {
-      isAuthenticated: true,
-      expiresAt: expiresAt.toISOString(),
-      loginTime: new Date().toISOString()
+    const authData = JSON.parse(auth)
+    return authData.access_token || null
+  } catch (error) {
+    console.error('获取token失败:', error)
+    return null
+  }
+}
+
+/**
+ * 登录（使用加密密码）
+ * @param {string} username - 用户名
+ * @param {string} password - 明文密码
+ * @returns {Promise<{success: boolean, message: string, data?: object}>}
+ */
+export async function login(username, password) {
+  try {
+    // 加密密码
+    const encryptedPassword = await encryptPassword(password, API_BASE_URL)
+    
+    // 调用后端登录接口
+    const response = await api.post('/api/v1/auth/login-encrypted', {
+      username,
+      encrypted_password: encryptedPassword
+    })
+    
+    if (response.data && response.data.access_token) {
+      const expiresAt = new Date()
+      expiresAt.setDate(expiresAt.getDate() + 7) // 7天后过期
+      
+      const authData = {
+        isAuthenticated: true,
+        access_token: response.data.access_token,
+        token_type: response.data.token_type,
+        expiresAt: expiresAt.toISOString(),
+        loginTime: new Date().toISOString()
+      }
+      
+      const userData = {
+        username: username,
+        loginTime: new Date().toISOString()
+      }
+      
+      localStorage.setItem(AUTH_KEY, JSON.stringify(authData))
+      localStorage.setItem(USER_KEY, JSON.stringify(userData))
+      
+      // 触发登录事件
+      window.dispatchEvent(new CustomEvent('authStateChanged', { 
+        detail: { isAuthenticated: true } 
+      }))
+      
+      return { 
+        success: true, 
+        message: '登录成功',
+        data: response.data
+      }
+    } else {
+      return { success: false, message: '登录失败，未收到有效token' }
     }
+  } catch (error) {
+    console.error('登录错误:', error)
     
-    const userData = {
-      username: user.username,
-      loginTime: new Date().toISOString()
+    if (error.response) {
+      // 服务器返回了错误响应
+      const status = error.response.status
+      const detail = error.response.data?.detail || '登录失败'
+      
+      if (status === 401) {
+        return { success: false, message: '用户名或密码错误' }
+      } else if (status === 403) {
+        return { success: false, message: '用户账户已被禁用' }
+      } else if (status === 400) {
+        return { success: false, message: detail }
+      } else {
+        return { success: false, message: `登录失败: ${detail}` }
+      }
+    } else if (error.request) {
+      // 请求已发出但没有收到响应
+      return { success: false, message: '无法连接到服务器，请检查网络连接' }
+    } else {
+      // 其他错误
+      return { success: false, message: error.message || '登录失败，请重试' }
     }
-    
-    localStorage.setItem(AUTH_KEY, JSON.stringify(authData))
-    localStorage.setItem(USER_KEY, JSON.stringify(userData))
-    
-    // 触发登录事件
-    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { isAuthenticated: true } }))
-    
-    return { success: true, message: '登录成功' }
-  } else {
-    return { success: false, message: '用户名或密码错误' }
   }
 }
 
