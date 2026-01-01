@@ -1,0 +1,60 @@
+version: '3.8'
+
+# 开发环境 Docker Compose 配置
+# 使用方式: docker-compose -f docker-compose.dev.yml up
+
+services:
+  # 数据库服务
+  db:
+    image: postgres:15-alpine
+    container_name: codingspace-db-dev
+    environment:
+      POSTGRES_USER: codingspace
+      POSTGRES_PASSWORD: codingspace_password
+      POSTGRES_DB: codingspace
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codingspace"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - codingspace-network
+
+  # 后端服务（开发模式，支持热重载）
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: codingspace-backend-dev
+    environment:
+      - DATABASE_URL=postgresql://codingspace:codingspace_password@db:5432/codingspace
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - DEBUG=True
+      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+    volumes:
+      - ./backend:/app
+      - backend_uploads_dev:/app/uploads
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - codingspace-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  backend_uploads_dev:
+    driver: local
+
+networks:
+  codingspace-network:
+    driver: bridge
+

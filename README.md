@@ -1,121 +1,216 @@
 # codingSpace
 
-一个基于 Vue 3 的综合性开发工具平台，集成了多种实用的编程工具，包括算法刷题日历、代码运行器等。
+一个基于 Vue 3 + FastAPI 的个人网站平台，集成了多种实用工具、新闻热点和内容管理功能。
 
-## ✨ 功能特性
-
-### 🏠 主页功能
-- **工具分类**：按类别浏览工具（全部、算法工具、代码工具、数据处理、其他工具）
-- **搜索功能**：在头部搜索框快速搜索工具
-- **工具卡片**：直观展示每个工具的功能和描述
-- **实时时间**：头部显示当前时间
-
-### 📅 算法刷题日历
-- **日历视图**：直观展示每天的刷题情况
-- **题目管理**：轻松添加、编辑和查看题目
-- **代码编辑器**：支持 Python 代码编辑，带语法高亮
-- **代码运行**：直接在浏览器中运行 Python 代码（基于 Pyodide）
-- **题目解析**：记录每道题的解题思路和解析
-- **本地存储**：使用 localStorage 保存数据
-- **日历组件**：侧边栏显示日历小部件
-
-### 🔧 其他工具（规划中）
-- **代码运行器**：在线运行 Python 代码，实时查看结果
-- **算法可视化**：可视化展示各种算法的执行过程
-- **数据转换**：JSON、XML、CSV 等格式转换
-
-## 🛠️ 技术栈
-
-- **Vue 3** - 渐进式 JavaScript 框架（Composition API）
-- **Vite** - 下一代前端构建工具
-- **Vue Router** - 官方路由管理器
-- **Pyodide** - 在浏览器中运行 Python
-- **CodeMirror 6** - 代码编辑器（用于代码编辑功能）
-
-## 📦 项目结构
+## 📁 项目结构
 
 ```
 codingSpace/
-├── public/
-│   └── favicon.svg          # 网站图标
-├── src/
-│   ├── components/          # Vue 组件
-│   │   ├── Calendar.vue      # 日历主组件
-│   │   ├── CalendarWidget.vue # 日历小部件
-│   │   ├── ProblemModal.vue  # 题目弹窗组件
-│   │   └── CodeEditor.vue    # 代码编辑器组件
-│   ├── views/                # 页面视图
-│   │   ├── Home.vue          # 主页
-│   │   └── Calendar.vue      # 日历页面
-│   ├── router/               # 路由配置
-│   │   └── index.js
-│   ├── utils/                # 工具函数
-│   │   ├── storage.js        # 数据存储（localStorage）
-│   │   └── pythonRunner.js   # Python 代码运行器
-│   ├── styles/               # 样式文件
-│   │   └── main.css          # 主样式
-│   ├── App.vue               # 根组件
-│   └── main.js               # 入口文件
-├── index.html                # HTML 模板
-├── package.json             # 项目配置
-├── vite.config.js           # Vite 配置
-└── README.md                # 项目说明
+├── frontend/          # 前端项目（Vue 3 + Vite）
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
+├── backend/           # 后端项目（FastAPI）
+│   ├── app/
+│   ├── main.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── docker-compose.yml  # Docker Compose 配置
+└── README.md
 ```
+
+## ✨ 功能特性
+
+### 🛠️ 实用工具集
+- **代码格式化**：支持多种编程语言的代码格式化
+- **文本比对**：对比两个文本文件的差异
+- **自动生成密码**：生成安全、复杂的密码
+- **编解码工具**：Base64、URL、HTML 等编解码
+- **更多工具**：持续添加中...
+
+### 📰 新闻热点
+- **新闻聚合**：展示各类新闻内容
+- **Docker 服务集成**：支持从其他 Docker 服务（如爬虫服务）获取新闻数据
+- **分类浏览**：按类别查看不同新闻
+- **搜索功能**：快速搜索感兴趣的新闻
+
+### 📝 内容记录
+- **博客管理**：发布和管理个人博客文章
+- **电子书管理**：上传和管理电子书文件
+- **刷题记录**：记录算法刷题进度和笔记
+- **文件上传**：支持多种文件格式上传
+- **在线预览**：支持文档、图片等文件的在线预览
+- **分类标签**：灵活的内容分类和标签系统
+
+### 🔐 用户系统
+- **用户注册/登录**：安全的用户认证系统
+- **个人中心**：管理个人信息和内容
+- **数据同步**：多设备数据同步
+
+## 🛠️ 技术栈
+
+### 前端
+- **Vue 3** - 渐进式 JavaScript 框架（Composition API）
+- **Vite** - 下一代前端构建工具
+- **Vue Router** - 官方路由管理器
+- **Axios** - HTTP 客户端
+
+### 后端
+- **FastAPI** - 现代、快速的 Python Web 框架
+- **SQLAlchemy** - Python ORM 框架
+- **Pydantic** - 数据验证
+- **JWT** - 身份认证
+- **Uvicorn** - ASGI 服务器
+- **Pillow** - 图像处理（用于文件预览）
+- **aiofiles** - 异步文件操作
+
+### 部署
+- **Docker** - 容器化部署
+- **Docker Compose** - 多容器编排
+- **Nginx** - 反向代理（可选）
 
 ## 🚀 快速开始
 
-### 环境要求
-
-- Node.js >= 16.0.0
-- npm >= 7.0.0
-
-### 安装依赖
+### 使用 Docker Compose（推荐）
 
 ```bash
-npm install
+# 克隆项目
+git clone <repository-url>
+cd codingSpace
+
+# 配置环境变量
+cp backend/env.example backend/.env
+# 编辑 backend/.env 文件，修改配置
+
+# 启动所有服务
+docker-compose up -d
+
+# 查看服务状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs -f
 ```
 
-### 开发模式
+服务将在以下地址启动：
+- 前端：`http://localhost:3000`
+- 后端：`http://localhost:8000`
+- API 文档：`http://localhost:8000/docs`
+
+### 本地开发
+
+#### 前端开发
 
 ```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-应用将在 `http://localhost:3000` 启动，并自动打开浏览器。
+前端服务将在 `http://localhost:3000` 启动。
 
-### 构建生产版本
+#### 后端开发
 
 ```bash
-npm run build
+cd backend
+
+# 创建虚拟环境（推荐）
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 配置环境变量
+cp env.example .env
+# 编辑 .env 文件，修改配置
+
+# 运行服务
+python main.py
 ```
 
-构建产物将输出到 `dist` 目录。
+后端服务将在 `http://localhost:8000` 启动。
 
-### 预览生产版本
+### API文档
+
+启动后端服务后，可以访问：
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+## 🐳 Docker 部署
+
+### 构建镜像
 
 ```bash
-npm run preview
+# 构建后端镜像
+docker build -t codingspace-backend ./backend
+
+# 构建前端镜像（如果需要）
+docker build -t codingspace-frontend ./frontend
+```
+
+### 使用 Docker Compose
+
+项目提供了 `docker-compose.yml` 文件，可以一键启动所有服务：
+
+```bash
+docker-compose up -d
+```
+
+### 环境变量配置
+
+在 `backend/.env` 文件中配置以下变量：
+
+```env
+# 应用配置
+APP_NAME=codingSpace Backend
+APP_VERSION=1.0.0
+DEBUG=False
+
+# 服务器配置
+HOST=0.0.0.0
+PORT=8000
+
+# 数据库配置
+DATABASE_URL=postgresql://user:password@db:5432/codingspace
+
+# JWT配置
+SECRET_KEY=your-secret-key-here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=10080
+
+# CORS配置
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+
+# 文件存储配置
+UPLOAD_DIR=./uploads
+MAX_UPLOAD_SIZE=10485760  # 10MB
 ```
 
 ## 📖 使用说明
 
-### 主页使用
+### 工具使用
 
-1. **浏览工具**：在主页查看所有可用工具
-2. **分类筛选**：点击分类标签筛选不同类别的工具
-3. **搜索工具**：在头部搜索框输入关键词搜索工具
-4. **查看时间**：头部右侧显示当前时间
+1. **代码格式化**：选择语言，粘贴代码，一键格式化
+2. **文本比对**：上传或粘贴两个文本，查看差异
+3. **密码生成**：设置长度和复杂度，生成安全密码
+4. **编解码**：选择编码类型，输入内容进行编解码
 
-### 算法刷题日历使用
+### 新闻热点
 
-1. **查看日历**：进入日历页面，查看当前月份的日历视图
-2. **添加题目**：
-   - 点击日历上任意日期的 "+" 按钮
-   - 或点击日期单元格，然后在下方列表点击添加
-3. **编辑题目**：点击题目列表中的"编辑"按钮
-4. **运行代码**：在题目编辑弹窗中，点击"运行代码"按钮即可在浏览器中执行 Python 代码
-5. **查看题目**：点击日历上的日期或题目列表中的题目项即可查看详情
-6. **日历小部件**：在页面右侧可以看到日历小部件，快速查看有题目的日期
+1. **浏览新闻**：在新闻页面查看最新热点
+2. **分类筛选**：按类别查看不同新闻
+3. **搜索新闻**：使用搜索功能查找感兴趣的内容
+4. **Docker 服务集成**：配置爬虫服务地址，自动获取新闻
+
+### 内容管理
+
+1. **发布博客**：创建和编辑博客文章
+2. **上传文件**：上传电子书、文档等文件
+3. **在线预览**：直接在线预览上传的文件
+4. **刷题记录**：记录算法刷题进度和笔记
+5. **分类管理**：使用标签和分类组织内容
 
 ## 🎨 界面特色
 
@@ -124,21 +219,40 @@ npm run preview
 - **响应式设计**：适配不同屏幕尺寸
 - **现代化 UI**：毛玻璃效果、渐变文字、发光边框等
 
+## 🔐 后端框架选择说明
+
+本项目后端选择了 **FastAPI** 框架。详细对比分析请查看 [FRAMEWORK_COMPARISON.md](./FRAMEWORK_COMPARISON.md)。
+
+### 选择 FastAPI 的理由
+
+1. **文件上传支持**：原生支持文件上传，适合内容管理需求
+2. **异步处理**：支持异步操作，适合与 Docker 服务集成
+3. **Docker 友好**：轻量级，易于容器化部署
+4. **高性能**：适合处理多种工具和内容管理的高并发需求
+5. **自动文档**：自动生成 API 文档，方便前后端协作
+6. **类型安全**：基于类型提示，减少 bug
+
 ## ⚠️ 注意事项
 
-- 代码运行功能需要加载 Pyodide，首次运行可能需要一些时间
-- 数据存储在浏览器的 localStorage 中，清除浏览器数据会丢失所有题目
-- Python 代码运行环境有限制，某些系统级操作可能无法执行
-- 搜索功能目前仅支持工具名称和描述的搜索
+- 生产环境部署前，请修改 `.env` 中的 `SECRET_KEY` 为强随机字符串
+- 文件上传大小限制可在配置中调整
+- 建议使用 PostgreSQL 作为生产环境数据库
+- Docker 部署时注意数据持久化（使用 volumes）
+- 与外部 Docker 服务集成时，注意网络配置和安全性
 
 ## 📝 开发计划
 
-- [ ] 实现代码运行器独立页面
-- [ ] 实现算法可视化功能
-- [ ] 实现数据转换工具
-- [ ] 添加更多工具分类
-- [ ] 支持数据导出/导入
-- [ ] 添加用户账户系统
+- [x] 实现前后端分离架构
+- [x] 实现用户认证系统
+- [x] Docker 部署配置
+- [ ] 实现工具集 API（代码格式化、文本比对等）
+- [ ] 实现新闻热点 API（支持 Docker 服务集成）
+- [ ] 实现内容管理 API（博客、电子书、文件上传）
+- [ ] 实现文件在线预览功能
+- [ ] 前端集成后端 API
+- [ ] 添加更多实用工具
+- [ ] 实现数据统计功能
+- [ ] 优化 Docker 部署流程
 
 ## 📄 License
 
@@ -146,7 +260,7 @@ MIT
 
 ## 👤 作者
 
-codingSpace Team
+codingSpace
 
 ---
 
