@@ -55,16 +55,7 @@
         </button>
       </form>
 
-      <div class="login-footer">
-        <p class="demo-info">
-          <span>演示账号：</span>
-          <span class="demo-account">admin / admin123</span>
-          <span class="demo-separator">|</span>
-          <span class="demo-account">user / user123</span>
-          <span class="demo-separator">|</span>
-          <span class="demo-account">test / test123</span>
-        </p>
-      </div>
+
     </div>
   </div>
 </template>

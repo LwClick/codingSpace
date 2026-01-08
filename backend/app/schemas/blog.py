@@ -44,3 +44,4 @@ class BlogResponse(BlogBase):
     class Config:
         from_attributes = True
 
+

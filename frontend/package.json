@@ -1,7 +1,7 @@
 {
-  "name": "algorithm-calendar",
+  "name": "codingspace-frontend",
   "version": "1.0.0",
-  "description": "算法刷题日历展示系统",
+  "description": "codingSpace 平台前端",
   "type": "module",
   "scripts": {
     "dev": "vite",

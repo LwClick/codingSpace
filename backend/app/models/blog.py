@@ -27,3 +27,4 @@ class Blog(Base):
     # 关系
     user = relationship("User", backref="blogs")
 
+

@@ -8,14 +8,24 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.api.v1 import api_router
-from app.db.database import init_db
+from app.db.database import init_db, SessionLocal
+from app.db.init_data import init_data
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
     # 启动时初始化数据库
-    init_db()
+    did_init = init_db()
+    
+    # 仅首次初始化时执行数据初始化
+    if did_init:
+        db = SessionLocal()
+        try:
+            init_data(db)
+        finally:
+            db.close()
+        
     yield
     # 关闭时清理资源（如果需要）
 
@@ -23,7 +33,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="codingSpace 算法刷题日历系统后端API",
+    description="codingSpace平台后端API",
     lifespan=lifespan
 )
 
@@ -64,4 +74,3 @@ if __name__ == "__main__":
         port=settings.PORT,
         reload=settings.DEBUG
     )
-

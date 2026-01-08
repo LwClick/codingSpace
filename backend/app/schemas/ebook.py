@@ -45,3 +45,4 @@ class EbookResponse(EbookBase):
     class Config:
         from_attributes = True
 
+
